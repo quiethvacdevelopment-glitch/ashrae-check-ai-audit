@@ -3,7 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState, createContext, useContext, useEffect } from 'react';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthPage } from './components/AuthPage';
+import { AccessExpiredOverlay } from './components/AccessExpiredOverlay';
 import { Header } from './components/Header';
 import { Navigation, TabId } from './components/Navigation';
 import { AuditTab } from './components/tabs/AuditTab';
@@ -38,13 +41,15 @@ interface ProjectContextType {
 
 export const ProjectContext = createContext<ProjectContextType | null>(null);
 
-export default function App() {
+function AppContent() {
+  const { user, loading, hasAccess } = useAuth();
   const [activeTab, setActiveTab] = useState<TabId>('audit');
   const [normativeFiles, setNormativeFiles] = useState<File[]>([]);
   const [projectFiles, setProjectFiles] = useState<File[]>([]);
   const [projectName, setProjectName] = useState('');
   const [projectType, setProjectType] = useState('Residential Building');
   const [additionalInfo, setAdditionalInfo] = useState('');
+
   const [templates, setTemplates] = useState<Template[]>([
     { id: 1, title: 'Insolation Calculation', description: 'Calculates the duration of insolation in residential rooms according to ASHRAE standards.' },
     { id: 2, title: 'Fire Exits', description: 'Checks the number and width of evacuation exits in multifunctional buildings.' },
@@ -112,8 +117,35 @@ export default function App() {
   const totalSizeMB = (totalSize / (1024 * 1024)).toFixed(1);
   const progressPercent = Math.min((totalSize / (50 * 1024 * 1024)) * 100, 100);
 
+  // Check for payment success on URL return from Stripe
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('payment') === 'success') {
+      window.history.replaceState({}, '', '/');
+    }
+  }, []);
+
+  // Auth loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-slate-400 text-sm">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Not logged in → show login/signup page
+  if (!user) {
+    return <AuthPage />;
+  }
+
   return (
     <ProjectContext.Provider value={contextValue}>
+      {/* Access expired overlay — shows over dashboard */}
+      {!hasAccess && <AccessExpiredOverlay />}
       <div className="min-h-screen flex flex-col bg-[#f8fafc]">
         <Header />
         <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
@@ -322,5 +354,13 @@ export default function App() {
         </footer>
       </div>
     </ProjectContext.Provider>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
