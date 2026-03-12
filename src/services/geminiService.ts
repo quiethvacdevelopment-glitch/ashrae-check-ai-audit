@@ -42,7 +42,7 @@ export async function performAIAction(
   projectFiles: File[],
   volumeFiles?: { estimate?: File, actual?: File }
 ) {
-  const model = "gemini-1.5-flash";
+  const model = "gemini-2.5-flash";
 
   let systemInstruction = `Role: Hardcore Technical Textbook Publisher.
 You are a top-tier technical layout designer and engineer with 20 years of experience in building codes and standards.
