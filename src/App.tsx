@@ -117,7 +117,7 @@ function AppContent() {
   const totalSizeMB = (totalSize / (1024 * 1024)).toFixed(1);
   const progressPercent = Math.min((totalSize / (50 * 1024 * 1024)) * 100, 100);
 
-  // Check for payment success on URL return from Stripe
+  // Check for payment success on URL return from checkout
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('payment') === 'success') {

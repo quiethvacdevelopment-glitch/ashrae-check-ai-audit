@@ -7,7 +7,6 @@ interface Profile {
   email: string;
   trial_expires_at: string | null;
   access_expires_at: string | null;
-  stripe_customer_id: string | null;
 }
 
 interface AuthContextType {

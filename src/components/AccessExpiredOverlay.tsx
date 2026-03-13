@@ -11,7 +11,7 @@ export function AccessExpiredOverlay() {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('/api/create-checkout-session', {
+      const res = await fetch('/api/ls-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user.id, userEmail: user.email }),
@@ -69,7 +69,7 @@ export function AccessExpiredOverlay() {
                 'Full access to all AI auditing tools',
                 'Unlimited compliance reports',
                 'No auto-renewal — pay only when needed',
-                'Secure payment via Stripe',
+                'Secure one-time payment',
               ].map((item) => (
                 <li key={item} className="flex items-center gap-2 text-slate-600">
                   <svg className="w-4 h-4 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -90,7 +90,7 @@ export function AccessExpiredOverlay() {
             disabled={loading}
             className="w-full py-3.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/30 text-sm"
           >
-            {loading ? 'Redirecting to Stripe...' : '🔓 Unlock 30-Day Access — $20'}
+            {loading ? 'Redirecting to Checkout...' : '🔓 Unlock 30-Day Access — $20'}
           </button>
 
           <p className="text-xs text-slate-400 mt-4">
