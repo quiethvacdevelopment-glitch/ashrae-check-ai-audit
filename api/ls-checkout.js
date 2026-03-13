@@ -9,15 +9,62 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing userId' });
   }
 
-  try {
-    // TODO: Replace with actual Lemon Squeezy API call
-    console.log(`Generating Lemon Squeezy checkout for ${userId} (${userEmail})`);
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+  const apiKey = process.env.LEMON_SQUEEZY_API_KEY;
+  const storeId = process.env.LEMON_SQUEEZY_STORE_ID;
+  const variantId = process.env.LEMON_SQUEEZY_VARIANT_ID;
 
-    // Redirect to a placeholder URL for now
-    const checkoutUrl = `${req.headers.origin || 'https://ashrae-check-ai-audit.vercel.app'}?payment=simulated_success`;
+  if (!apiKey || !storeId || !variantId) {
+    return res.status(500).json({ error: 'Missing Lemon Squeezy configuration' });
+  }
+
+  try {
+    const response = await fetch('https://api.lemonsqueezy.com/v1/checkouts', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/vnd.api+json',
+        'Content-Type': 'application/vnd.api+json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        data: {
+          type: "checkouts",
+          attributes: {
+            checkout_data: {
+              email: userEmail || undefined,
+              custom: {
+                user_id: userId
+              }
+            },
+            product_options: {
+              redirect_url: `${req.headers.origin || 'https://ashrae-check-ai-audit.vercel.app'}?payment=success`
+            }
+          },
+          relationships: {
+            store: {
+              data: {
+                type: "stores",
+                id: storeId.toString()
+              }
+            },
+            variant: {
+              data: {
+                type: "variants",
+                id: variantId.toString()
+              }
+            }
+          }
+        }
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Lemon Squeezy API Error:', errorData);
+      throw new Error('Failed to create Lemon Squeezy checkout');
+    }
+
+    const json = await response.json();
+    const checkoutUrl = json.data.attributes.url;
     
     return res.status(200).json({ url: checkoutUrl });
   } catch (err) {
