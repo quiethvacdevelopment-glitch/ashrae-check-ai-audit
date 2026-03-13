@@ -82,7 +82,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    
+    if (data.user && !error) {
+      // Create profile record with 10 days free trial
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + 10);
+      
+      await supabase.from('profiles').insert([
+        { 
+          id: data.user.id, 
+          email: email,
+          trial_expires_at: expirationDate.toISOString()
+        }
+      ]);
+      
+      // Also update local state
+      await fetchProfile(data.user.id);
+    }
+    
     return { error };
   };
 

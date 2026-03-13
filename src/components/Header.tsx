@@ -1,7 +1,9 @@
 import React from 'react';
 import { LogOut, Building2 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 export function Header() {
+  const { signOut } = useAuth();
   return (
     <header className="bg-[#1e293b] text-white py-4 px-8 border-b border-slate-800">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -23,7 +25,11 @@ export function Header() {
               <span className="text-xs font-bold text-white uppercase">Premium</span>
             </div>
           </div>
-          <button className="p-2 hover:bg-slate-800 rounded-lg transition-colors">
+          <button 
+            onClick={signOut}
+            className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+            title="Log out"
+          >
             <LogOut className="w-5 h-5 text-slate-400" />
           </button>
         </div>
