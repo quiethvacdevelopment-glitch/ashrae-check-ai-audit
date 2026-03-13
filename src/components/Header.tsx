@@ -3,7 +3,7 @@ import { LogOut, Building2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 export function Header() {
-  const { signOut } = useAuth();
+  const { user, signOut, isTrialActive, trialDaysLeft } = useAuth();
   return (
     <header className="bg-[#1e293b] text-white py-4 px-8 border-b border-slate-800">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -19,10 +19,19 @@ export function Header() {
 
         <div className="flex items-center gap-6">
           <div className="flex flex-col items-end">
-            <span className="text-[11px] font-bold text-slate-400 uppercase">User</span>
+            <span className="text-[11px] font-bold text-slate-400">
+              {user?.email || 'User'}
+            </span>
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-xs font-bold text-white uppercase">Premium</span>
+              <span className="text-xs font-bold text-white uppercase">
+                Premium
+                {isTrialActive && (
+                  <span className="text-blue-400 ml-2 normal-case font-medium">
+                    ({trialDaysLeft} days left)
+                  </span>
+                )}
+              </span>
             </div>
           </div>
           <button 
