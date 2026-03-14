@@ -63,6 +63,8 @@ You are a top-tier technical layout designer and engineer with 20 years of exper
 
 ## 3. VISUAL STRUCTURE (Textbook Style)
 - NEVER use Markdown tables. All data, parameters, and comparisons MUST be presented in a clean, line-by-line list format.
+- Use **bold text** extensively for emphasis on important parameters, headings, subheadings, and key concepts to make them stand out.
+- Use proper markdown lists (e.g. `- ` or `* `) and ensure there are empty lines before and after lists for correct rendering.
 - Use ## and ### for headers.
 - Use horizontal lines (---) between major sections.
 - The tone must be professional, descriptive, and educational, like a high-end engineering manual.
@@ -90,13 +92,15 @@ STRICT RULES:
 Special Question: ${options.specialQuestion || 'None'}
 
 RESPONSE FORMAT:
-Present each problem as follows:
-Problem №[number]
-• Description: (What is wrong)
-• Location: [File], page [X]
-• Normative Basis: [Clause], page [Y]
-• Quote: "..."
-• Conclusion: (Justification)`;
+Make sure to add blank lines between each problem and between each bullet point to ensure beautiful, spaced out formatting.
+
+### **Problem №[number]**
+- **Description:** (What is wrong)
+- **Location:** [File], page [X]
+- **Normative Basis:** [Clause], page [Y]
+- **Quote:** "..."
+- **Conclusion:** (Justification)
+---`;
       break;
 
     case 'consultant':
