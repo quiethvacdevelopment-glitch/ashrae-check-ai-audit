@@ -164,7 +164,10 @@ function AppContent() {
                 </div>
                 <span className="text-[10px] font-mono text-slate-500">{totalSizeMB} / 50.0 MB</span>
               </div>
-              <p className="text-[10px] text-slate-400 font-medium italic">All data is processed securely within your local browser environment.</p>
+              <div className="flex flex-col gap-0.5">
+                <p className="text-[10px] text-slate-400 font-medium italic">All data is processed securely within your local browser environment.</p>
+                <p className="text-[10px] text-amber-600 font-medium italic">Normative Base: The number of pages should not exceed 300.</p>
+              </div>
             </div>
 
             <div className="flex items-center gap-3">
