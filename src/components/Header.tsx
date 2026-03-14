@@ -6,7 +6,7 @@ export function Header() {
   const { user, signOut, isTrialActive, trialDaysLeft } = useAuth();
   return (
     <header className="bg-[#1e293b] text-white py-4 px-8 border-b border-slate-800">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <div className="w-full flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
             <Building2 className="w-6 h-6 text-white" />

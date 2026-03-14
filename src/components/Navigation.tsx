@@ -21,7 +21,7 @@ const tabs = [
 export function Navigation({ activeTab, onTabChange }: NavigationProps) {
   return (
     <div className="bg-white border-b border-slate-200 px-6">
-      <div className="flex gap-8 max-w-7xl mx-auto">
+      <div className="flex gap-8 w-full">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (

@@ -151,8 +151,8 @@ function AppContent() {
         <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
         
         {/* Action Bar */}
-        <div className="bg-white border-b border-slate-200 px-8 py-3">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="bg-white border-b border-slate-200 px-8 py-3 w-full">
+          <div className="w-full flex items-center justify-between">
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-3">
                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Context Volume:</span>
@@ -196,8 +196,8 @@ function AppContent() {
           </div>
         </div>
 
-        <main className="flex-1 overflow-hidden">
-          <div className="max-w-7xl mx-auto h-full p-8 flex gap-8">
+        <main className="flex-1 overflow-hidden w-full">
+          <div className="w-full h-full p-8 flex gap-8">
             {/* Left Sidebar Configuration */}
             {activeTab !== 'templates' && (
               <div className="w-80 flex-shrink-0 flex flex-col gap-6 overflow-y-auto pr-2 scrollbar-thin">
