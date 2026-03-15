@@ -256,12 +256,16 @@ export function VolumesTab() {
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">OR CHOOSE FROM TEMPLATE</label>
               <select 
                 value={template}
-                onChange={(e) => setTemplate(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setTemplate(val);
+                  if (val) setSpecialQuestion(val);
+                }}
                 className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-blue-500 transition-all shadow-sm"
               >
                 <option value="">-- Select a saved query --</option>
                 {context.templates.map(t => (
-                  <option key={t.id} value={t.title}>{t.title}</option>
+                  <option key={t.id} value={t.description}>{t.title}</option>
                 ))}
               </select>
             </div>

@@ -118,12 +118,16 @@ export function ChatTab() {
             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">OR CHOOSE TEMPLATE:</label>
             <select 
               value={template}
-              onChange={(e) => setTemplate(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setTemplate(val);
+                if (val) setInput(val);
+              }}
               className="flex-1 px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-blue-500 transition-all"
             >
               <option value="">-- Select a saved query --</option>
               {context.templates.map(t => (
-                <option key={t.id} value={t.title}>{t.title}</option>
+                <option key={t.id} value={t.description}>{t.title}</option>
               ))}
             </select>
           </div>
