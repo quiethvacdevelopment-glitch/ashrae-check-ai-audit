@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Mail, MessageCircle } from 'lucide-react';
 
 export function AccessExpiredOverlay() {
-  const { user, profile, isTrialActive } = useAuth();
+  const { user, profile, isTrialActive, signOut } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -107,6 +107,15 @@ export function AccessExpiredOverlay() {
                 WhatsApp: +37455482667
               </a>
             </div>
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-slate-100">
+            <button
+              onClick={signOut}
+              className="text-[11px] font-bold text-slate-400 hover:text-slate-600 uppercase tracking-widest transition-colors flex items-center gap-2 mx-auto"
+            >
+              Sign out and try another account
+            </button>
           </div>
         </div>
       </div>
