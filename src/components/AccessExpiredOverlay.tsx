@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { Mail, MessageCircle } from 'lucide-react';
 
 export function AccessExpiredOverlay() {
   const { user, profile, isTrialActive } = useAuth();
@@ -93,12 +94,20 @@ export function AccessExpiredOverlay() {
             {loading ? 'Redirecting to Checkout...' : '🔓 Unlock 30-Day Access — $20'}
           </button>
 
-          <p className="text-xs text-slate-400 mt-4">
-            Questions?{' '}
-            <a href="mailto:quiethvacdevelopment@gmail.com" className="text-blue-500 hover:underline">
-              Contact Support
-            </a>
-          </p>
+          <div className="mt-6 flex flex-col items-center gap-2 text-xs text-slate-500">
+            <span className="text-slate-500">For feedback and support, please contact us:</span>
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
+              <a href="mailto:quiethvacdevelopment@gmail.com" className="flex items-center gap-1.5 hover:text-blue-500 transition-colors">
+                <Mail className="w-3.5 h-3.5" />
+                quiethvacdevelopment@gmail.com
+              </a>
+              <span className="hidden sm:inline text-slate-300">|</span>
+              <a href="https://wa.me/37455482667" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-[#25D366] transition-colors">
+                <MessageCircle className="w-3.5 h-3.5" />
+                WhatsApp: +37455482667
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
