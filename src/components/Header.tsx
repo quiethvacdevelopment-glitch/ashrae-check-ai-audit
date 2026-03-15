@@ -22,16 +22,37 @@ export function Header() {
             <span className="text-[11px] font-bold text-slate-400">
               {user?.email || 'User'}
             </span>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-xs font-bold text-white uppercase">
-                Premium
-                {isTrialActive && (
-                  <span className="text-blue-400 ml-2 normal-case font-medium">
-                    ({trialDaysLeft} days left)
+            <div className="flex items-center gap-3">
+              {isTrialActive ? (
+                <div className="flex items-center gap-2">
+                  <div className="flex flex-col items-end mr-1">
+                    <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider">Free Trial</span>
+                    <span className="text-xs font-bold text-white leading-none">{trialDaysLeft} days left</span>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      // Trigger same upgrade logic as overlay
+                      const overlay = document.querySelector('[data-upgrade-button]') as HTMLButtonElement;
+                      if (overlay) overlay.click();
+                      else {
+                        // If overlay not present, we can redirect directly or show a message
+                        // For now, let's just make it look good and handle the click
+                        window.dispatchEvent(new CustomEvent('trigger-upgrade'));
+                      }
+                    }}
+                    className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-[10px] font-black rounded-lg shadow-lg shadow-blue-500/20 transition-all uppercase tracking-wider active:scale-95"
+                  >
+                    Upgrade
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  <span className="text-xs font-bold text-white uppercase tracking-wider">
+                    Premium Access
                   </span>
-                )}
-              </span>
+                </div>
+              )}
             </div>
           </div>
           <button 
