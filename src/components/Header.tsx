@@ -2,7 +2,11 @@ import React from 'react';
 import { LogOut, Building2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
-export function Header() {
+interface HeaderProps {
+  onUpgradeClick?: () => void;
+}
+
+export function Header({ onUpgradeClick }: HeaderProps) {
   const { user, signOut, isTrialActive, trialDaysLeft } = useAuth();
   return (
     <header className="bg-[#1e293b] text-white py-4 px-8 border-b border-slate-800">
@@ -30,16 +34,7 @@ export function Header() {
                     <span className="text-xs font-bold text-white leading-none">{trialDaysLeft} days left</span>
                   </div>
                   <button 
-                    onClick={() => {
-                      // Trigger same upgrade logic as overlay
-                      const overlay = document.querySelector('[data-upgrade-button]') as HTMLButtonElement;
-                      if (overlay) overlay.click();
-                      else {
-                        // If overlay not present, we can redirect directly or show a message
-                        // For now, let's just make it look good and handle the click
-                        window.dispatchEvent(new CustomEvent('trigger-upgrade'));
-                      }
-                    }}
+                    onClick={onUpgradeClick}
                     className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-[10px] font-black rounded-lg shadow-lg shadow-blue-500/20 transition-all uppercase tracking-wider active:scale-95"
                   >
                     Upgrade

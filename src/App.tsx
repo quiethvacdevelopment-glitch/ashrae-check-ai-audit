@@ -59,6 +59,7 @@ export const ProjectContext = createContext<ProjectContextType | null>(null);
 function AppContent() {
   const { user, loading, hasAccess } = useAuth();
   const [activeTab, setActiveTab] = useState<TabId>('audit');
+  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
   const [normativeFiles, setNormativeFiles] = useState<File[]>([]);
   const [projectFiles, setProjectFiles] = useState<File[]>([]);
   const [projectName, setProjectName] = useState('');
@@ -252,9 +253,12 @@ function AppContent() {
   return (
     <ProjectContext.Provider value={contextValue}>
       {/* Access expired overlay — shows over dashboard */}
-      <AccessExpiredOverlay />
+      <AccessExpiredOverlay 
+        isForcedOpen={isUpgradeModalOpen} 
+        onClose={() => setIsUpgradeModalOpen(false)} 
+      />
       <div className="min-h-screen flex flex-col bg-[#f8fafc]">
-        <Header />
+        <Header onUpgradeClick={() => setIsUpgradeModalOpen(true)} />
         <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
         
         {/* Action Bar */}

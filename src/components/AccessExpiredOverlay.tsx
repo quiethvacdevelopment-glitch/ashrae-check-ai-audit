@@ -2,18 +2,15 @@ import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Mail, MessageCircle, X } from 'lucide-react';
 
-export function AccessExpiredOverlay() {
+interface AccessExpiredOverlayProps {
+  isForcedOpen?: boolean;
+  onClose?: () => void;
+}
+
+export function AccessExpiredOverlay({ isForcedOpen = false, onClose }: AccessExpiredOverlayProps) {
   const { user, profile, isTrialActive, hasAccess, signOut } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  const [isForcedVisible, setIsForcedVisible] = useState(false);
-
-  React.useEffect(() => {
-    const handleTrigger = () => setIsForcedVisible(true);
-    window.addEventListener('trigger-upgrade', handleTrigger);
-    return () => window.removeEventListener('trigger-upgrade', handleTrigger);
-  }, []);
 
   const handleUpgrade = async () => {
     if (!user) return;
@@ -40,7 +37,7 @@ export function AccessExpiredOverlay() {
 
   const wasOnTrial = !profile?.access_expires_at;
 
-  if (hasAccess && !isForcedVisible) return null;
+  if (hasAccess && !isForcedOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -51,9 +48,9 @@ export function AccessExpiredOverlay() {
       <div className="relative bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 overflow-hidden">
         {/* Top gradient bar */}
         <div className="h-1.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 relative">
-          {isForcedVisible && hasAccess && (
+          {isForcedOpen && hasAccess && (
             <button 
-              onClick={() => setIsForcedVisible(false)}
+              onClick={onClose}
               className="absolute top-4 right-4 p-2 bg-slate-100/50 hover:bg-slate-200/50 rounded-full transition-colors z-10"
             >
               <X className="w-5 h-5 text-slate-600" />
@@ -69,10 +66,10 @@ export function AccessExpiredOverlay() {
           </div>
 
           <h2 className="text-xl font-bold text-slate-900 mb-2">
-            {isForcedVisible && hasAccess ? 'Upgrade to Premium' : 'Your Access Period Has Ended'}
+            {isForcedOpen && hasAccess ? 'Upgrade to Premium' : 'Your Access Period Has Ended'}
           </h2>
           <p className="text-slate-500 text-sm mb-6">
-            {isForcedVisible && hasAccess 
+            {isForcedOpen && hasAccess 
               ? 'Get 30 days of full access to all engineering audit tools.'
               : wasOnTrial
                 ? 'Your 10-day free trial has concluded.'
