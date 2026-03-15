@@ -16,7 +16,7 @@ import { ProblemsTab } from './components/tabs/ProblemsTab';
 import { PlansTab } from './components/tabs/PlansTab';
 import { VolumesTab } from './components/tabs/VolumesTab';
 import { TemplatesTab } from './components/tabs/TemplatesTab';
-import { FolderOpen, Save, FileText, X, Trash2 } from 'lucide-react';
+import { FolderOpen, Save, FileText, X, Trash2, Mail, MessageCircle } from 'lucide-react';
 
 interface Template {
   id: number;
@@ -352,8 +352,20 @@ function AppContent() {
           </div>
         </main>
 
-        <footer className="py-6 px-8 text-center border-t border-slate-200 bg-white">
+        <footer className="py-6 px-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-200 bg-white">
           <p className="text-[11px] text-slate-400 font-medium">© 2024 ASHRAE Check AI Audit - All rights reserved.</p>
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-[11px] text-slate-400 font-medium">
+            <span className="uppercase tracking-wider text-[10px] font-bold text-slate-300">Feedback:</span>
+            <a href="mailto:quiethvacdevelopment@gmail.com" className="flex items-center gap-1.5 hover:text-blue-600 transition-colors">
+              <Mail className="w-3.5 h-3.5" />
+              quiethvacdevelopment@gmail.com
+            </a>
+            <span className="hidden sm:inline text-slate-200">|</span>
+            <a href="https://wa.me/37455482667" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-[#25D366] transition-colors">
+              <MessageCircle className="w-3.5 h-3.5" />
+              WhatsApp: +37455482667
+            </a>
+          </div>
         </footer>
       </div>
     </ProjectContext.Provider>
