@@ -171,7 +171,7 @@ export function AuthPage() {
           By continuing, you agree to our Terms of Service
         </p>
         <div className="mt-8 flex flex-col items-center gap-2 text-xs text-slate-500">
-          <span className="uppercase tracking-wider text-[10px] font-bold text-slate-600">Feedback & Support</span>
+          <span className="uppercase tracking-wider text-[10px] font-bold text-slate-500 mb-1">For feedback and support, please contact us:</span>
           <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
             <a href="mailto:quiethvacdevelopment@gmail.com" className="flex items-center gap-1.5 hover:text-blue-400 transition-colors">
               <Mail className="w-3.5 h-3.5" />

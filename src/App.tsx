@@ -355,7 +355,7 @@ function AppContent() {
         <footer className="py-6 px-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-200 bg-white">
           <p className="text-[11px] text-slate-400 font-medium">© 2024 ASHRAE Check AI Audit - All rights reserved.</p>
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-[11px] text-slate-400 font-medium">
-            <span className="uppercase tracking-wider text-[10px] font-bold text-slate-300">Feedback:</span>
+            <span className="uppercase tracking-wider text-[10px] font-bold text-slate-400 mr-2">For feedback and support, please contact us:</span>
             <a href="mailto:quiethvacdevelopment@gmail.com" className="flex items-center gap-1.5 hover:text-blue-600 transition-colors">
               <Mail className="w-3.5 h-3.5" />
               quiethvacdevelopment@gmail.com
