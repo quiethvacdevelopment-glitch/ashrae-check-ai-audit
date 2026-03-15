@@ -6,15 +6,17 @@ import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
-interface Message {
+export interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
 
 export function ChatTab() {
   const context = useContext(ProjectContext);
+  if (!context) return null;
+  const { chatMessages: messages, setChatMessages: setMessages } = context;
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [template, setTemplate] = useState('');
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -25,11 +27,13 @@ export function ChatTab() {
   }, [messages]);
 
   const handleSend = async () => {
-    if (!input.trim() || !context) return;
+    if ((!input.trim() && !template) || !context) return;
     
-    const userMsg: Message = { role: 'user', content: input };
+    const content = input.trim() || template;
+    const userMsg: Message = { role: 'user', content };
     setMessages(prev => [...prev, userMsg]);
     setInput('');
+    setTemplate('');
     setLoading(true);
 
     try {
@@ -39,7 +43,7 @@ export function ChatTab() {
           projectName: context.projectName,
           projectType: context.projectType,
           additionalInfo: context.additionalInfo,
-          specialQuestion: input,
+          specialQuestion: input || template,
           history: messages.map(m => ({ role: m.role, content: m.content }))
         },
         context.normativeFiles,
@@ -108,8 +112,22 @@ export function ChatTab() {
         </div>
       </div>
 
-      <div className="p-8 border-t border-slate-100 bg-white">
-        <div className="max-w-4xl mx-auto relative">
+      <div className="p-8 border-t border-slate-100 bg-white space-y-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center gap-4 mb-4">
+            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">OR CHOOSE TEMPLATE:</label>
+            <select 
+              value={template}
+              onChange={(e) => setTemplate(e.target.value)}
+              className="flex-1 px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-blue-500 transition-all"
+            >
+              <option value="">-- Select a saved query --</option>
+              {context.templates.map(t => (
+                <option key={t.id} value={t.title}>{t.title}</option>
+              ))}
+            </select>
+          </div>
+          <div className="relative">
           <input 
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -119,7 +137,7 @@ export function ChatTab() {
           />
           <button 
             onClick={handleSend}
-            disabled={loading || !input.trim()}
+            disabled={loading || (!input.trim() && !template)}
             className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center hover:bg-blue-700 transition-all shadow-md disabled:opacity-50"
           >
             <ArrowUp className="w-5 h-5" />
@@ -127,5 +145,6 @@ export function ChatTab() {
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 }

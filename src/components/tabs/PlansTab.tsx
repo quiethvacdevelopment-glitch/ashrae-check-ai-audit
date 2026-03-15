@@ -8,9 +8,11 @@ import rehypeKatex from 'rehype-katex';
 
 export function PlansTab() {
   const context = useContext(ProjectContext);
+  if (!context) return null;
+  const { plansResult: result, setPlansResult: setResult } = context;
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState('');
   const [specialQuestion, setSpecialQuestion] = useState('');
+  const [template, setTemplate] = useState('');
 
   const handleAudit = async () => {
     if (!context) return;
@@ -22,7 +24,7 @@ export function PlansTab() {
           projectName: context.projectName,
           projectType: context.projectType,
           additionalInfo: context.additionalInfo,
-          specialQuestion: specialQuestion || "Perform a graphical analysis of the floor plans and find ergonomic or normative problems."
+          specialQuestion: specialQuestion || template || "Perform a graphical analysis of the floor plans and find ergonomic or normative problems."
         },
         context.normativeFiles,
         context.projectFiles
@@ -59,6 +61,20 @@ export function PlansTab() {
               rows={4}
               className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-600 placeholder:text-slate-300 focus:outline-none focus:border-blue-500 transition-all resize-none italic"
             />
+            
+            <div className="pt-2 border-t border-slate-100">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">OR CHOOSE FROM TEMPLATE</label>
+              <select 
+                value={template}
+                onChange={(e) => setTemplate(e.target.value)}
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-blue-500 transition-all shadow-sm"
+              >
+                <option value="">-- Select a saved query --</option>
+                {context.templates.map(t => (
+                  <option key={t.id} value={t.title}>{t.title}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-slate-100 rounded-3xl bg-slate-50/50">

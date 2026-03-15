@@ -6,13 +6,16 @@ import * as XLSX from 'xlsx';
 
 export function VolumesTab() {
   const context = useContext(ProjectContext);
+  if (!context) return null;
+  const { 
+    volumesResult: result, setVolumesResult: setResult,
+    volumesParsedData: parsedData, setVolumesParsedData: setParsedData 
+  } = context;
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState('');
   const [estimateFile, setEstimateFile] = useState<File | null>(null);
   const [actualFile, setActualFile] = useState<File | null>(null);
   const [specialQuestion, setSpecialQuestion] = useState('');
-
-  const [parsedData, setParsedData] = useState<any>(null);
+  const [template, setTemplate] = useState('');
 
   const handleAudit = async () => {
     if (!context || !estimateFile || !actualFile) return;
@@ -25,7 +28,7 @@ export function VolumesTab() {
           projectName: context.projectName,
           projectType: context.projectType,
           additionalInfo: context.additionalInfo,
-          specialQuestion: specialQuestion || "Compare the estimated and actual execution volumes. Find the deviations."
+          specialQuestion: specialQuestion || template || "Compare the estimated and actual execution volumes. Find the deviations."
         },
         context.normativeFiles,
         context.projectFiles,
@@ -248,6 +251,20 @@ export function VolumesTab() {
               rows={4}
               className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-600 placeholder:text-slate-300 focus:outline-none focus:border-blue-500 transition-all resize-none italic"
             />
+            
+            <div className="pt-2 border-t border-slate-100">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">OR CHOOSE FROM TEMPLATE</label>
+              <select 
+                value={template}
+                onChange={(e) => setTemplate(e.target.value)}
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-blue-500 transition-all shadow-sm"
+              >
+                <option value="">-- Select a saved query --</option>
+                {context.templates.map(t => (
+                  <option key={t.id} value={t.title}>{t.title}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <button 

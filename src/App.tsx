@@ -11,7 +11,7 @@ import { Header } from './components/Header';
 import { Navigation, TabId } from './components/Navigation';
 import { AuditTab } from './components/tabs/AuditTab';
 import { ConsultantTab } from './components/tabs/ConsultantTab';
-import { ChatTab } from './components/tabs/ChatTab';
+import { ChatTab, Message } from './components/tabs/ChatTab';
 import { ProblemsTab } from './components/tabs/ProblemsTab';
 import { PlansTab } from './components/tabs/PlansTab';
 import { VolumesTab } from './components/tabs/VolumesTab';
@@ -37,6 +37,21 @@ interface ProjectContextType {
   setAdditionalInfo: (info: string) => void;
   templates: Template[];
   setTemplates: React.Dispatch<React.SetStateAction<Template[]>>;
+  // Analysis Results
+  auditResult: string;
+  setAuditResult: (val: string) => void;
+  consultantResult: string;
+  setConsultantResult: (val: string) => void;
+  problemsResult: string;
+  setProblemsResult: (val: string) => void;
+  plansResult: string;
+  setPlansResult: (val: string) => void;
+  volumesResult: string;
+  setVolumesResult: (val: string) => void;
+  volumesParsedData: any;
+  setVolumesParsedData: (val: any) => void;
+  chatMessages: Message[];
+  setChatMessages: React.Dispatch<React.SetStateAction<Message[]>>;
 }
 
 export const ProjectContext = createContext<ProjectContextType | null>(null);
@@ -55,44 +70,129 @@ function AppContent() {
     { id: 2, title: 'Fire Exits', description: 'Checks the number and width of evacuation exits in multifunctional buildings.' },
     { id: 3, title: 'Parking Spaces', description: 'Calculates the required number of parking spaces based on the number of apartments.' },
   ]);
+
+  const [auditResult, setAuditResult] = useState('');
+  const [consultantResult, setConsultantResult] = useState('');
+  const [problemsResult, setProblemsResult] = useState('');
+  const [plansResult, setPlansResult] = useState('');
+  const [volumesResult, setVolumesResult] = useState('');
+  const [volumesParsedData, setVolumesParsedData] = useState<any>(null);
+  const [chatMessages, setChatMessages] = useState<Message[]>([]);
+
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  const handleSave = () => {
-    const projectData = {
-      projectName,
-      projectType,
-      additionalInfo,
-      normativeFilesCount: normativeFiles.length,
-      projectFilesCount: projectFiles.length,
-      timestamp: new Date().toISOString()
-    };
-    const blob = new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${projectName || 'project'}_config.json`;
-    link.click();
-    URL.revokeObjectURL(url);
+  const fileToDataURL = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const dataURLToFile = (dataUrl: string, fileName: string): File => {
+    const arr = dataUrl.split(',');
+    const mimeMatch = arr[0].match(/:(.*?);/);
+    if (!mimeMatch) throw new Error('Invalid data URL');
+    const mime = mimeMatch[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], fileName, { type: mime });
+  };
+
+  const handleSave = async () => {
+    try {
+      const normativeData = await Promise.all(
+        normativeFiles.map(async (f) => ({
+          name: f.name,
+          data: await fileToDataURL(f)
+        }))
+      );
+      
+      const projectFilesData = await Promise.all(
+        projectFiles.map(async (f) => ({
+          name: f.name,
+          data: await fileToDataURL(f)
+        }))
+      );
+
+      const projectState = {
+        projectName,
+        projectType,
+        additionalInfo,
+        templates,
+        normativeFiles: normativeData,
+        projectFiles: projectFilesData,
+        results: {
+          audit: auditResult,
+          consultant: consultantResult,
+          problems: problemsResult,
+          plans: plansResult,
+          volumes: volumesResult,
+          volumesParsedData,
+          chatMessages
+        },
+        timestamp: new Date().toISOString()
+      };
+
+      const blob = new Blob([JSON.stringify(projectState, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${projectName || 'project'}_full_backup.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Save failed", err);
+      alert("Error saving project full data.");
+    }
   };
 
   const handleOpen = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       try {
-        const data = JSON.parse(event.target?.result as string);
-        if (data.projectName !== undefined) setProjectName(data.projectName);
-        if (data.projectType !== undefined) setProjectType(data.projectType);
-        if (data.additionalInfo !== undefined) setAdditionalInfo(data.additionalInfo);
-        alert("Project data restored successfully.");
+        const state = JSON.parse(event.target?.result as string);
+        
+        if (state.projectName !== undefined) setProjectName(state.projectName);
+        if (state.projectType !== undefined) setProjectType(state.projectType);
+        if (state.additionalInfo !== undefined) setAdditionalInfo(state.additionalInfo);
+        if (state.templates) setTemplates(state.templates);
+        
+        // Restore results
+        if (state.results) {
+          if (state.results.audit !== undefined) setAuditResult(state.results.audit);
+          if (state.results.consultant !== undefined) setConsultantResult(state.results.consultant);
+          if (state.results.problems !== undefined) setProblemsResult(state.results.problems);
+          if (state.results.plans !== undefined) setPlansResult(state.results.plans);
+          if (state.results.volumes !== undefined) setVolumesResult(state.results.volumes);
+          if (state.results.volumesParsedData !== undefined) setVolumesParsedData(state.results.volumesParsedData);
+          if (state.results.chatMessages !== undefined) setChatMessages(state.results.chatMessages);
+        }
+
+        // Restore files
+        if (state.normativeFiles) {
+          const files = state.normativeFiles.map((f: any) => dataURLToFile(f.data, f.name));
+          setNormativeFiles(files);
+        }
+        if (state.projectFiles) {
+          const files = state.projectFiles.map((f: any) => dataURLToFile(f.data, f.name));
+          setProjectFiles(files);
+        }
+
+        alert("Project state restored successfully.");
       } catch (err) {
         console.error("Error parsing project file", err);
-        alert("Error reading file.");
+        alert("Error reading project file.");
       }
     };
     reader.readAsText(file);
-    // Reset input
     e.target.value = '';
   };
 
@@ -102,7 +202,14 @@ function AppContent() {
     projectName, setProjectName,
     projectType, setProjectType,
     additionalInfo, setAdditionalInfo,
-    templates, setTemplates
+    templates, setTemplates,
+    auditResult, setAuditResult,
+    consultantResult, setConsultantResult,
+    problemsResult, setProblemsResult,
+    plansResult, setPlansResult,
+    volumesResult, setVolumesResult,
+    volumesParsedData, setVolumesParsedData,
+    chatMessages, setChatMessages
   };
 
   const removeFile = (type: 'normative' | 'project', index: number) => {

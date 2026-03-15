@@ -18,13 +18,15 @@ const auditDirections = [
 
 export function AuditTab() {
   const context = useContext(ProjectContext);
+  if (!context) return null;
+  const { auditResult: result, setAuditResult: setResult } = context;
   const [selectedDirections, setSelectedDirections] = useState<string[]>(['arch', 'struct', 'hvac', 'water', 'fire', 'power']);
   const [counts, setCounts] = useState<Record<string, number>>({
     arch: 5, struct: 5, hvac: 5, water: 5, fire: 5, power: 5
   });
   const [specialQuestion, setSpecialQuestion] = useState('');
+  const [template, setTemplate] = useState('');
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState('');
 
   const toggleDirection = (id: string) => {
     setSelectedDirections(prev => 
@@ -47,7 +49,7 @@ export function AuditTab() {
             label: auditDirections.find(d => d.id === id)?.label || id,
             count: counts[id]
           })),
-          specialQuestion,
+          specialQuestion: specialQuestion || template,
           projectName: context.projectName,
           projectType: context.projectType,
           additionalInfo: context.additionalInfo
@@ -133,6 +135,20 @@ export function AuditTab() {
               rows={4}
               className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-600 placeholder:text-slate-300 focus:outline-none focus:border-blue-500 transition-all resize-none italic"
             />
+            
+            <div className="pt-2 border-t border-slate-100">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">OR CHOOSE FROM TEMPLATE</label>
+              <select 
+                value={template}
+                onChange={(e) => setTemplate(e.target.value)}
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-blue-500 transition-all shadow-sm"
+              >
+                <option value="">-- Select a saved query --</option>
+                {context.templates.map(t => (
+                  <option key={t.id} value={t.title}>{t.title}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <button 
