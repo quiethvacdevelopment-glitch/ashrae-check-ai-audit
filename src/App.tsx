@@ -252,7 +252,7 @@ function AppContent() {
   return (
     <ProjectContext.Provider value={contextValue}>
       {/* Access expired overlay — shows over dashboard */}
-      {!hasAccess && <AccessExpiredOverlay />}
+      <AccessExpiredOverlay />
       <div className="min-h-screen flex flex-col bg-[#f8fafc]">
         <Header />
         <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
